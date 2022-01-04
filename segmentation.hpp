@@ -2,8 +2,10 @@
 #define SEGMENTATION_HPP
 
 #include <vector>
-#include <set>
+#include <unordered_map>
 #include <opencv2/core.hpp>
+#include <algorithm>
+#include "utils/disjoint-set.hpp"
 
 enum EvalMethod {
   color,
