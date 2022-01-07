@@ -1,0 +1,8 @@
+*.o
+*.jpg
+*.png
+.vs/
+.vscode/
+Debug/
+*.sln
+*.vcxproj*
