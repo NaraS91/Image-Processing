@@ -19,27 +19,6 @@ enum EvalMethod {
   featureDistance,
 };
 
-namespace std {
-  template<>
-  struct hash<Pixel>
-  {
-    std::size_t operator()(const Pixel &p) const
-    {
-      return 3 * p.x + 7 * p.y * 13 * p.color[0] * 17 * p.color[1] + 19 * p.color[3];
-    }
-  };
-
-  template<>
-  struct hash<utils::Node<Pixel>> 
-  {
-    std::size_t operator()(const utils::Node<Pixel> &n) const
-    {
-    return 3 * intptr_t(n.parent) + 7 * hash<Pixel>()(n.elem);
-    }
-  };
-}
-
-
 struct Edge {
   Pixel a;
   Pixel b;

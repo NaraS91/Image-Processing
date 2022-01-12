@@ -1,14 +1,22 @@
 #include "segmentation.hpp"
 
 int main() {
-    cv::Mat img = cv::imread("test.jpg", cv::IMREAD_COLOR);
+    cv::Mat img = cv::imread("smallTest.png", cv::IMREAD_COLOR);
     cv::Mat out = cv::Mat(img.size().height, img.size().width, CV_8UC3);
-    segment(img, out, 500, color);
+    
+    int k;
+    std::cout << "input a value for k..." << std::endl;
+    std::cin >> k;
+    segment(img, out, k, color);
 
     cv::imshow("Display window", out);
-    int k = cv::waitKey(0);
 
-    if (k == 's')
+    k = cv::waitKey(0);
+
+    char c;
+    std::cout << "press s to save the image"<< std::endl;
+    std::cin >> c;
+    if (c == 's')
     {
         cv::imwrite("out.png", out);
     }

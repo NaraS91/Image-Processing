@@ -1,85 +1,80 @@
 #ifndef DISJOINT_SET_HPP
 #define DISJOINT_SET_HPP
 #include <vector>
+#include <iostream>
 
 namespace utils {
-  template<typename T>
-  struct Node {
-      T elem;
-      size_t rank;
-      size_t size;
-      Node* parent;
-  };
-
-  template<typename T>
-  bool operator==(const Node<T> &lhs, const Node<T> &rhs)
-  {
-      return lhs.elem == rhs.elem && lhs.parent == rhs.parent;
-  }
-
-  template <typename T>
   class Set{
     public:
-      Set(T elem) {
-          _representative = new Node<T>;
-          _representative->size = 1;
-          _representative->elem = elem;
-          _representative->parent = NULL;
-          _representative->rank = 0;
+      Set(int size) {
+        _size = size;
+        _elems = new int[size];
+        _ranks = new int[size];
+        _subSizes = new int[size];
+        initSet();
       }
 
-      Set() {
-          _representative = NULL;
+      int Find(int elem) {
+        int curr = elem;
+
+        while (parent(curr) != curr) {
+          curr = parent(curr);
+        }
+
+        int representative = curr;
+        curr = elem;
+        while (curr != representative) {
+          int next = parent(curr);
+          _elems[curr] = representative;
+          curr = next;
+        }
+
+        return representative;
       }
 
-      ~Set() {
-          delete _representative;
+      void Union(int x, int y) {
+        int rep_x = Find(x);
+        int rep_y = Find(y);
+
+        if (rep_x == rep_y)
+            return;
+
+        if (_ranks[rep_x] > _ranks[rep_y]) {
+          rep_x = rep_x + rep_y;
+          rep_y = rep_x - rep_y;
+          rep_x = rep_x - rep_y;
+        }
+
+
+        _elems[rep_x] = rep_y;
+        _subSizes[rep_y] += _subSizes[rep_x];
+
+        if (_ranks[rep_x] == _ranks[rep_y])
+          _ranks[rep_y]++;
       }
 
-      Node<T> *Find() {
-          Node<T>* representative = _representative;
-          while (representative->parent != NULL) {
-              representative = representative->parent;
-          }
-
-          Node<T>* child = _representative;
-          while (child->parent != NULL) {
-              auto next = child->parent;
-              child->parent = representative;
-              child = next;
-          }
-
-          return representative;
-      }
-
-      void Union(Set other) {
-          Node<T>* x = Find();
-          Node<T>* y = other.Find();
-
-          if (x == y)
-              return;
-
-          if (x->rank > y->rank) {
-              Node<T>* z = x;
-              x = y;
-              y = z;
-          }
-
-          x->parent = y;
-
-          y->size += x->size;
-
-          if (x->rank == y->rank)
-              y->rank++;
-      }
-
-      size_t Size() {
-          Node<T>* rep = Find();
-          return rep->size;
+      unsigned Size(int i) {
+        return _subSizes[Find(i)];
       }
 
     private:
-      Node<T> *_representative;
+      int parent(int elem) {
+        if (elem > _size)
+          throw std::exception("index out of bounds");
+        return _elems[elem];
+      }
+
+      void initSet() {
+        for (int i = 0; i < _size; i++) {
+          _elems[i] = i;
+          _subSizes[i] = 1;
+        }
+      }
+
+      int* _elems;
+      int* _ranks;
+      int* _subSizes;
+      int _size;
   };
 }
 #endif
