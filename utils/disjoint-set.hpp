@@ -14,6 +14,12 @@ namespace utils {
         initSet();
       }
 
+      ~Set(){
+        delete _elems;
+        delete _ranks;
+        delete _subSizes;
+      }
+
       int Find(int elem) {
         int curr = elem;
 
