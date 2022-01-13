@@ -1,5 +1,5 @@
 #include "segmentation.hpp"
-#include "utils/disjoint-set.hpp"
+#include "../utils/disjoint-set.hpp"
 #include <iostream>
 //TODO: optimize, add image smoothing
 static Edge createEdge(size_t i0, size_t j0, size_t i1, size_t j1, cv::Mat img)

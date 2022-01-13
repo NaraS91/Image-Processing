@@ -7,12 +7,8 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <list>
-#include "utils/disjoint-set.hpp"
+#include "../utils/disjoint-set.hpp"
 #include "pixel.hpp"
-//main includes
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/highgui.hpp>
 
 enum EvalMethod {
   color,
