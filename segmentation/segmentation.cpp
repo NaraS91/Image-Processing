@@ -11,6 +11,35 @@ unsigned index(Pixel p, unsigned width) {
   return p.x * width + p.y;
 }
 
+std::list<unsigned> adjacentPixels(unsigned i, unsigned j, unsigned height, unsigned width) {
+  std::list<unsigned> result;
+  if (i > 0) {
+    result.push_back((i - 1) * width + j);
+    if (j > 0) 
+      result.push_back((i - 1) * width + (j - 1));
+
+    if (j + 1 < width)
+      result.push_back((i - 1) * width + (j + 1));
+  }
+
+  if (j > 0)
+    result.push_back(i * width + (j - 1));
+
+  if (j + 1 < width)
+    result.push_back(i * width + (j + 1));
+
+  if (i + 1 < height) {
+    result.push_back((i + 1) * width + j);
+    if (j > 0)
+      result.push_back((i + 1) * width + (j - 1));
+
+    if (j + 1 < width)
+      result.push_back((i + 1) * width + (j + 1));
+  }
+
+  return result;
+}
+
 void run_segmentation(utils::Set& segments, std::list<Edge>& edges, uint8_t color, uint32_t k, unsigned image_width)
 {
   edges.sort([color](Edge &first, Edge &second)
@@ -52,29 +81,25 @@ void run_segmentation(utils::Set& segments, std::list<Edge>& edges, uint8_t colo
 utils::Set intersect(utils::Set &segments_red, utils::Set &segments_green, utils::Set &segments_blue,
                size_t height, size_t width)
 {
-  std::list<unsigned> representatives;
   utils::Set result = utils::Set(height * width);
   size_t p_index = 0;
   for (int i = 0; i < height; i++)
   {
     for (int j = 0; j < width; j++)
     {
-      auto it = representatives.begin();
-      while (it != representatives.end()) {
+      std::list<unsigned> candidates = adjacentPixels(i, j, height, width);
+      auto it = candidates.begin();
+      while (it != candidates.end()) {
         bool same_red = segments_red.Find(*it) == segments_red.Find(p_index);
         bool same_green = segments_green.Find(*it) == segments_green.Find(p_index);
         bool same_blue = segments_blue.Find(*it) == segments_blue.Find(p_index);
 
         if (same_blue && same_red && same_green) {
           result.Union(p_index, *it);
-          break;
         }
 
         it++;
       }
-
-      if (it == representatives.end())
-        representatives.push_front(p_index);
 
       p_index++;
     }
@@ -83,7 +108,7 @@ utils::Set intersect(utils::Set &segments_red, utils::Set &segments_green, utils
   return result;
 }
 
-void createOutput(cv::Mat &out, utils::Set segments, unsigned height, unsigned width)
+void createOutput(cv::Mat &out, utils::Set& segments, unsigned height, unsigned width)
 {
   auto colors = std::unordered_map<unsigned, cv::Vec3b>();
 

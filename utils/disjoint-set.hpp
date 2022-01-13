@@ -15,9 +15,12 @@ namespace utils {
       }
 
       ~Set(){
-        delete _elems;
-        delete _ranks;
-        delete _subSizes;
+        delete []_elems;
+        _elems = nullptr;
+        delete []_ranks;
+        _ranks = nullptr;
+        delete []_subSizes;
+        _subSizes = nullptr;
       }
 
       int Find(int elem) {
