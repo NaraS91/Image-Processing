@@ -26,14 +26,14 @@ namespace utils {
       int Find(int elem) {
         int curr = elem;
 
-        while (parent(curr) != curr) {
-          curr = parent(curr);
+        while (_elems[curr] != curr) {
+          curr = _elems[curr];
         }
 
         int representative = curr;
         curr = elem;
         while (curr != representative) {
-          int next = parent(curr);
+          int next = _elems[curr];
           _elems[curr] = representative;
           curr = next;
         }
@@ -67,12 +67,6 @@ namespace utils {
       }
 
     private:
-      int parent(int elem) {
-        if (elem > _size)
-          throw std::exception("index out of bounds");
-        return _elems[elem];
-      }
-
       void initSet() {
         for (int i = 0; i < _size; i++) {
           _elems[i] = i;
