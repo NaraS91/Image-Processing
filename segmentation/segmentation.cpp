@@ -4,10 +4,11 @@
 #include "Segment.hpp"
 #include <iostream>
 #include <algorithm>
+#include <opencv2/opencv.hpp>
 #define DEBUG false
 
 
-//TODO: add image smoothing
+//TODO: add small groups mreging
 static inline Edge createEdge(size_t i0, size_t j0, size_t i1, size_t j1, cv::Mat img)
 {
   auto p1 = Pixel{ i0, j0, img.at<cv::Vec3b>(i0, j0) };
@@ -272,21 +273,28 @@ void segment(cv::Mat& img, utils::Set& out, int k, EvalMethod method, int concur
   }
 }
 
-void segment(cv::Mat& img, cv::Mat& out, int k, EvalMethod method, int parallel_edges, bool parallel_segmentation)
+void segment(cv::Mat& img, cv::Mat& out, int k, EvalMethod method, double sigma, int parallel_edges, bool parallel_segmentation)
 {
   utils::Set segmented = utils::Set(img.size().height * img.size().width);
-  segment(img, segmented, k, method, parallel_edges, parallel_segmentation);
+
+  cv::Mat smoothed;
+  if (sigma > 0) {
+    cv::GaussianBlur(img, smoothed, cv::Size(0, 0), sigma);
+    segment(smoothed, segmented, k, method, parallel_edges, parallel_segmentation);
+  }
+  else
+    segment(img, segmented, k, method, parallel_edges, parallel_segmentation);
   createOutputImage(out, segmented, img.size().height, img.size().width);
 }
 
-void segment(cv::Mat& img, cv::Mat& out, int k, EvalMethod method, int parallel_edges)
+void segment(cv::Mat& img, cv::Mat& out, int k, EvalMethod method, double sigma, int parallel_edges)
 {
-  segment(img, out, k, method, parallel_edges, false);
+  segment(img, out, k, method, sigma, parallel_edges, false);
 }
 
-void segment(cv::Mat& img, cv::Mat& out, int k, EvalMethod method)
+void segment(cv::Mat& img, cv::Mat& out, int k, EvalMethod method, double sigma)
 {
-  segment(img, out, k, method, 0, false);
+  segment(img, out, k, method, sigma, 0, false);
 }
 
 //void segment(cv::Mat& img, std::vector<Segment>& out, int k, EvalMethod method) {
