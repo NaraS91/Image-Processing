@@ -2,13 +2,14 @@ Experimenting with image processing
 
 ## Segmentation
 input: k\
-todo: gausian smoothing, threshold for small segments
+todo: threshold for small segments
 
 original:\
 ![alt text](https://github.com/NaraS91/Image-Processing/blob/main/queens_tower.jpg?raw=true)\
-segmented(k=500, without smoothing and threshold for small groups):\
+segmented(k=500, no smoothing):\
+![alt text](https://github.com/NaraS91/Image-Processing/blob/main/queens_tower_segmented.png?raw=true)\
+segmented(k=500, sigma=0.8):\
 ![alt text](https://github.com/NaraS91/Image-Processing/blob/main/queens_tower_segmented.png?raw=true)
-
 
 algorithm:\
 Efficient Graph-Based Image Segmentation\
